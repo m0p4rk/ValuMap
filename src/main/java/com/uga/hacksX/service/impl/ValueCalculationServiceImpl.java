@@ -21,27 +21,26 @@ public class ValueCalculationServiceImpl implements ValueCalculationService {
     @Override
     public Flux<CountryValue> calculateValues(UserInput userInput) {
         return exchangeRateService.getExchangeRates(userInput.getBaseCurrency())
-                .flatMapMany(rates -> Flux.fromIterable(costOfLivingService.getAllCountryCosts())
-                        .map(countryCost -> calculateCountryValue(
-                                countryCost,
-                                rates.getRates().get(countryCost.getCurrency()),
-                                userInput
-                        )));
+                .flatMapMany(rates -> costOfLivingService.getAllCosts()
+                        .map(countryCost -> calculateCountryValue(countryCost, rates.getRates().get(countryCost.getCurrency()), userInput)));
     }
 
     private CountryValue calculateCountryValue(CountryCost countryCost, Double exchangeRate, UserInput userInput) {
-        double adjustedDailyCost = countryCost.calculateAdjustedDailyCost(userInput.getTravelStyle());
-        double convertedDailyCost = adjustedDailyCost * exchangeRate;
-        int possibleDays = (int) (userInput.getBudget() / convertedDailyCost);
-        
-        double valueScore = calculateValueScore(possibleDays, convertedDailyCost);
+        if (exchangeRate == null) {
+            log.warn("Exchange rate not found for currency: {}", countryCost.getCurrency());
+            return null;
+        }
+
+        double dailyCost = countryCost.getCosts().get(userInput.getTravelStyle()) * exchangeRate;
+        int possibleDays = (int) (userInput.getBudget() / dailyCost);
+        double valueScore = calculateValueScore(possibleDays, dailyCost);
 
         return CountryValue.builder()
                 .countryCode(countryCost.getCountryCode())
                 .countryName(countryCost.getCountryName())
                 .currency(countryCost.getCurrency())
                 .exchangeRate(exchangeRate)
-                .dailyCost(convertedDailyCost)
+                .dailyCost(dailyCost)
                 .valueScore(valueScore)
                 .possibleDays(possibleDays)
                 .build();

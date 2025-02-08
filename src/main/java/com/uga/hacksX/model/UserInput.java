@@ -11,7 +11,11 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 public class UserInput {
     private double budget;
+    
+    @Builder.Default
     private String baseCurrency = "KRW";
+    
+    @Builder.Default
     private String travelStyle = "STANDARD"; // BACKPACKER, STANDARD, LUXURY
     
     // 여행 스타일에 따른 가중치 계산

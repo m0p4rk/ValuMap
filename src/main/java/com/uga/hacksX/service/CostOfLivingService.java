@@ -1,9 +1,10 @@
 package com.uga.hacksX.service;
 
 import com.uga.hacksX.model.CountryCost;
-import java.util.List;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 public interface CostOfLivingService {
-    CountryCost getCountryCost(String countryCode);
-    List<CountryCost> getAllCountryCosts();
+    Flux<CountryCost> getAllCosts();
+    Mono<CountryCost> getCostByCountryCode(String countryCode);
 }
