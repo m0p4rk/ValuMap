@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Real-time Exchange Rates')}">
+    <style>
+        .currency-card {
+            transition: all 0.3s ease;
+            border-left: 4px solid transparent;
+        }
+        .currency-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        .currency-flag {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            object-fit: cover;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .trend-up {
+            color: #28a745;
+            font-weight: bold;
+        }
+        .trend-down {
+            color: #dc3545;
+            font-weight: bold;
+        }
+        .currency-name {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+        .rate-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #1a237e;
+        }
+        .update-time {
+            font-size: 0.8rem;
+            color: #6c757d;
+        }
+        .currency-info {
+            font-size: 0.9rem;
+            color: #495057;
+        }
+        @media (max-width: 768px) {
+            .currency-card {
+                margin-bottom: 1rem;
+            }
+        }
+    </style>
+</head>
+<body class="bg-light">
+    <nav th:replace="~{fragments/layout :: nav}"></nav>
+
+    <div class="container mt-4">
+        <div class="row mb-4">
+            <div class="col">
+                <h2 class="text-center mb-4">Real-time Exchange Rates</h2>
+                <p class="text-center text-muted">
+                    <span id="updateTime">Last updated: </span>
+                    <button class="btn btn-sm btn-outline-primary ms-2" onclick="refreshRates()">
+                        <i class="fas fa-sync-alt"></i> Refresh
+                    </button>
+                </p>
+            </div>
+        </div>
+
+        <div class="row g-4">
+            <div class="col-12 col-md-6 col-lg-4" th:each="rate : ${allRates}">
+                <div class="card h-100 shadow-sm" th:style="'border-left: 4px solid ' + ${rate.color}">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center mb-3">
+                            <img th:src="${rate.flagUrl}" th:alt="${rate.currencyCode}" 
+                                 class="me-3" style="width: 48px; height: 48px; border-radius: 50%; object-fit: cover;">
+                            <div>
+                                <h5 class="mb-0" th:text="${rate.countryName}">Country</h5>
+                                <small class="text-muted" th:text="${rate.currencyCode + ' - ' + rate.currencyName}">Currency Info</small>
+                            </div>
+                        </div>
+                        
+                        <div class="rate-details">
+                            <div class="d-flex justify-content-between align-items-baseline mb-2">
+                                <span class="h4 mb-0" th:text="'1 USD = ' + ${rate.formattedRate + ' ' + rate.currencyCode}">Rate</span>
+                                <span th:class="${rate.getTrendClass()}">
+                                    <span th:text="${rate.getTrendSymbol()}"></span>
+                                    <span th:text="${rate.getFormattedTrend() + '%'}"></span>
+                                </span>
+                            </div>
+                            <div class="d-flex justify-content-between">
+                                <small class="text-muted" th:text="${'Base: ' + rate.baseAmount + ' ' + rate.currencyCode}">Base Amount</small>
+                                <small class="text-muted" th:text="${rate.lastUpdate}">Update Time</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function refreshRates() {
+            location.reload();
+        }
+
+        function updateTime() {
+            const now = new Date();
+            document.getElementById('updateTime').textContent = 
+                'Last updated: ' + now.toLocaleTimeString('en-US');
+        }
+
+        updateTime();
+        setInterval(updateTime, 1000);
+    </script>
+</body>
+</html> 

@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <th:block th:replace="~{fragments/layout :: head('ValuMap - Results')}"></th:block>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <style>
+        /* 기본 스타일 */
+        :root {
+            --primary-gradient: linear-gradient(135deg, #2193b0, #6dd5ed);
+            --card-gradient: linear-gradient(to bottom right, #ffffff, #f8f9fa);
+            --border-radius: 12px;
+            --transition-speed: 0.3s;
+        }
+
+        /* 예산 정보 섹션 */
+        .budget-info {
+            background: var(--primary-gradient);
+            color: white;
+            border-radius: var(--border-radius);
+            padding: 1.5rem;
+        }
+        
+        /* 추천 카드 스타일 */
+        .recommended-card {
+            background: var(--card-gradient);
+            border: none;
+            border-radius: var(--border-radius);
+            transition: transform var(--transition-speed) ease;
+        }
+        
+        .recommended-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+        
+        /* 가성비 점수 뱃지 */
+        .value-score-badge {
+            padding: 0.5rem 0.8rem;
+            border-radius: 20px;
+            color: white;
+            font-weight: 600;
+        }
+        
+        /* 지도 컨테이너 */
+        #map { 
+            height: 500px !important;
+            width: 100% !important;
+            z-index: 1;
+        }
+        
+        /* 반응형 디자인 */
+        @media (max-width: 768px) {
+            #map { 
+                height: 300px; 
+            }
+            .budget-info { 
+                padding: 1rem; 
+            }
+            .row.g-4 {
+                margin: 0 -0.5rem;
+            }
+            .col-md-4 {
+                padding: 0 0.5rem;
+            }
+        }
+    </style>
+</head>
+<body class="bg-light">
+    <!-- 네비게이션 바 -->
+    <nav th:replace="~{fragments/layout :: nav}"></nav>
+
+    <!-- 메인 컨테이너 -->
+    <div class="container py-4">
+        <!-- 검색 필터 섹션 -->
+        <section class="row mb-4">
+            <div class="col-md-8 mx-auto">
+                <div class="input-group">
+                    <input type="text" 
+                           id="countrySearch" 
+                           class="form-control" 
+                           placeholder="국가명 검색..."
+                           aria-label="국가 검색">
+                    <select id="regionFilter" 
+                            class="form-select" 
+                            style="max-width: 150px;"
+                            aria-label="지역 필터">
+                        <option value="">전체 지역</option>
+                        <option value="EAST_ASIA">동아시아</option>
+                        <option value="SOUTHEAST_ASIA">동남아시아</option>
+                        <option value="EUROPE">유럽</option>
+                        <option value="OCEANIA">오세아니아</option>
+                    </select>
+                </div>
+            </div>
+        </section>
+
+        <!-- 결과 표시 영역 -->
+        <section id="countryGrid" class="mb-4">
+            <!-- 여기는 비워두세요. results.js에서 동적으로 내용이 채워집니다 -->
+        </section>
+    </div>
+
+    <script th:inline="javascript">
+        window.currentUserInput = /*[[${userInput}]]*/ {
+            budget: 0,
+            duration: 0,
+            travelStyle: '일반'
+        };
+    </script>
+    <script type="module" src="/js/main.js"></script>
+    <script type="module" src="/js/map.js"></script>
+    <script type="module" src="/js/search.js"></script>
+    <script type="module" src="/js/results.js"></script>
+</body>
+</html>

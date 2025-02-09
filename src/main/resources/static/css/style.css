@@ -77,3 +77,410 @@ body {
     margin: 0;
     line-height: 1.5;
 }
+
+/* 로딩 인디케이터 스타일 */
+.loading-indicator {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 1000;
+    background: rgba(255, 255, 255, 0.8);
+    padding: 1rem;
+    border-radius: 0.5rem;
+    box-shadow: 0 2px 4px rgba(0,0,0,.1);
+}
+
+/* 성능 최적화를 위한 애니메이션 설정 */
+.country-popup {
+    will-change: transform;
+}
+
+.list-group-item {
+    will-change: transform;
+    transform: translateZ(0);
+}
+
+/* 지도 인터랙션 최적화 */
+.leaflet-interactive {
+    cursor: pointer;
+    transition: all 0.2s ease-out;
+}
+
+/* 국가 리스트 스타일 */
+.country-list {
+    max-height: calc(80vh - 300px);
+    overflow-y: auto;
+    scrollbar-width: thin;
+}
+
+.country-item {
+    transition: all 0.2s ease-out;
+    cursor: pointer;
+}
+
+.country-item:hover,
+.country-item.active {
+    background-color: rgba(0,0,0,.03);
+    transform: translateX(4px);
+}
+
+/* 지도 팝업 스타일 */
+.country-popup {
+    min-width: 200px;
+}
+
+.country-popup h6 {
+    margin-bottom: 0.5rem;
+    color: #333;
+}
+
+/* 반응형 조정 */
+@media (max-width: 768px) {
+    .container-fluid {
+        padding: 0.5rem;
+    }
+    
+    #map {
+        height: 300px !important;
+    }
+    
+    .country-list {
+        max-height: 300px;
+    }
+}
+
+/* 성능 최적화 */
+.leaflet-interactive {
+    will-change: transform;
+}
+
+.list-group-item {
+    will-change: transform;
+    transform: translateZ(0);
+}
+
+/* 로딩 오버레이 */
+.loading-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.8);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+}
+
+.loading-spinner {
+    text-align: center;
+}
+
+.country-search {
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    background: white;
+    padding: 1rem;
+    border-bottom: 1px solid #dee2e6;
+}
+
+@media (max-width: 768px) {
+    .country-search {
+        position: fixed;
+        width: 100%;
+        left: 0;
+    }
+    
+    #map {
+        margin-top: 60px;
+    }
+    
+    .country-list {
+        margin-top: 60px;
+        max-height: calc(100vh - 120px);
+    }
+}
+
+/* 카드 스타일링 */
+.country-card {
+    transition: transform 0.2s;
+}
+
+.country-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+
+.value-grade {
+    font-size: 0.8rem;
+    padding: 0.3em 0.6em;
+}
+
+/* 스크롤바 스타일링 */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
+
+/* 애니메이션 */
+.fade-in {
+    animation: fadeIn 0.3s ease-in;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+/* 뱃지 색상 */
+.bg-orange {
+    background-color: #fd7e14;
+    color: white;
+}
+
+/* 검색 결과 스타일링 */
+.search-results {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    max-height: 300px;
+    overflow-y: auto;
+    z-index: 1000;
+    display: none;
+}
+
+.search-result-item {
+    padding: 8px 12px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    cursor: pointer;
+    border-bottom: 1px solid #eee;
+}
+
+.search-result-item:hover {
+    background-color: #f8f9fa;
+}
+
+.search-flag {
+    width: 20px;
+    height: 15px;
+    object-fit: cover;
+}
+
+/* 선택된 국가 카드 하이라이트 */
+.country-card.highlight {
+    animation: highlight 2s ease-in-out;
+}
+
+@keyframes highlight {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+}
+
+/* 지도 스타일링 */
+#map {
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.leaflet-popup-content {
+    margin: 8px;
+}
+
+.country-popup {
+    text-align: center;
+}
+
+.country-popup img {
+    width: 30px;
+    margin-bottom: 5px;
+}
+
+.search-container {
+    position: relative;
+    margin-bottom: 1rem;
+}
+
+.suggestions-container {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 0 0 4px 4px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    z-index: 1000;
+    max-height: 300px;
+    overflow-y: auto;
+    display: none;
+}
+
+.suggestion-item {
+    padding: 8px 12px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    cursor: pointer;
+    border-bottom: 1px solid #eee;
+}
+
+.suggestion-item:last-child {
+    border-bottom: none;
+}
+
+.suggestion-item:hover {
+    background-color: #f8f9fa;
+}
+
+.suggestion-flag {
+    width: 24px;
+    height: 18px;
+    object-fit: cover;
+    border-radius: 2px;
+}
+
+.suggestion-info {
+    flex: 1;
+}
+
+.suggestion-name {
+    font-weight: 500;
+    margin-bottom: 2px;
+}
+
+.suggestion-details {
+    display: flex;
+    gap: 8px;
+    font-size: 0.8rem;
+}
+
+.badge {
+    font-weight: normal;
+    padding: 0.3em 0.6em;
+}
+
+.country-label {
+    background: none;
+    border: none;
+    box-shadow: none;
+    color: #333;
+    font-size: 10px;
+    font-weight: 500;
+    text-shadow: 
+        -1px -1px 0 #fff,
+        1px -1px 0 #fff,
+        -1px 1px 0 #fff,
+        1px 1px 0 #fff;
+    padding: 2px;
+    white-space: nowrap;
+    pointer-events: none;
+}
+
+.country-marker {
+    background: none;
+    border: none;
+}
+
+.marker-content {
+    display: flex;
+    align-items: center;
+    background: white;
+    padding: 4px 8px;
+    border-radius: 4px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    font-size: 12px;
+}
+
+.marker-content img {
+    width: 16px;
+    height: 12px;
+    margin-right: 4px;
+}
+
+.search-container {
+    position: relative;
+    margin-bottom: 1rem;
+}
+
+.search-results {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    max-height: 300px;
+    overflow-y: auto;
+    z-index: 1000;
+    display: none;
+}
+
+.search-result-item {
+    padding: 8px 12px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    cursor: pointer;
+    border-bottom: 1px solid #eee;
+}
+
+.search-result-item:hover {
+    background-color: #f8f9fa;
+}
+
+.search-info {
+    flex: 1;
+}
+
+.search-flag {
+    width: 24px;
+    height: 18px;
+    object-fit: cover;
+    border-radius: 2px;
+}
+
+.country-name {
+    font-weight: 500;
+}
+
+.local-name {
+    font-size: 0.9em;
+    color: #666;
+}
+
+.highlight {
+    animation: highlight 2s ease-in-out;
+}
+
+@keyframes highlight {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+}
+
+/* 나머지 스타일은 이전과 동일... */

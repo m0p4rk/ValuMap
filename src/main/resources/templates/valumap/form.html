@@ -1,39 +1,127 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head th:replace="~{fragments/layout :: head('가성비 계산')}"></head>
+<head th:replace="~{fragments/layout :: head('ValuMap - Travel Value Calculator')}">
+    <style>
+        .exchange-card {
+            transition: transform 0.2s;
+            border-left: 4px solid #0d6efd;
+        }
+        .exchange-card:hover {
+            transform: translateY(-3px);
+        }
+        .currency-flag {
+            width: 24px;
+            height: 24px;
+            margin-right: 8px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+        .trend-up { color: #28a745; }
+        .trend-down { color: #dc3545; }
+        @media (max-width: 768px) {
+            .exchange-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
 <body class="bg-light">
     <nav th:replace="~{fragments/layout :: nav}"></nav>
 
-    <div class="container mt-5">
+    <div class="container mt-4">
         <div class="row justify-content-center">
-            <div class="col-md-6">
-                <div class="card shadow-sm">
-                    <div class="card-body">
-                        <h2 class="card-title text-center mb-4">여행 가성비 계산</h2>
-                        <form th:action="@{/valumap}" th:object="${userInput}" method="post">
-                            <div class="mb-3">
-                                <label for="budget" class="form-label">예산</label>
-                                <div class="input-group">
-                                    <input type="number" class="form-control" id="budget" 
-                                           th:field="*{budget}" required min="100000"
-                                           placeholder="최소 100,000원">
-                                    <span class="input-group-text">KRW</span>
+            <!-- Exchange Rate Section -->
+            <div class="col-12 mb-4">
+                <h4 class="mb-3 text-center">Real-time Exchange Rates</h4>
+                <div class="row g-3">
+                    <div class="col-12 col-md-4">
+                        <div class="card shadow-sm exchange-card">
+                            <div class="card-body">
+                                <div class="d-flex align-items-center">
+                                    <img src="https://flagcdn.com/w40/jp.png" alt="JPY" class="currency-flag">
+                                    <div>
+                                        <h6 class="mb-0">Japanese Yen (JPY)</h6>
+                                        <p class="mb-0">100¥ = <span class="fw-bold" th:text="${exchangeRates.JPY.formattedRate}">0.00</span> USD</p>
+                                        <small th:class="${exchangeRates.JPY.trendClass}" th:if="${exchangeRates.JPY != null}">
+                                            <span th:text="${exchangeRates.JPY.trendSymbol}">▲</span>
+                                            <span th:text="${exchangeRates.JPY.formattedTrend}">0.00</span>%
+                                        </small>
+                                    </div>
                                 </div>
-                                <div class="form-text">여행에 사용할 총 예산을 입력하세요.</div>
                             </div>
-                            
-                            <div class="mb-4">
-                                <label for="travelStyle" class="form-label">여행 스타일</label>
-                                <select class="form-select" id="travelStyle" th:field="*{travelStyle}">
-                                    <option value="BACKPACKER">배낭여행 (저예산)</option>
-                                    <option value="STANDARD">일반 여행</option>
-                                    <option value="LUXURY">럭셔리 여행</option>
+                        </div>
+                    </div>
+                    <div class="col-12 col-md-4">
+                        <div class="card shadow-sm exchange-card">
+                            <div class="card-body">
+                                <div class="d-flex align-items-center">
+                                    <img src="https://flagcdn.com/w40/kr.png" alt="KRW" class="currency-flag">
+                                    <div>
+                                        <h6 class="mb-0">Korean Won (KRW)</h6>
+                                        <p class="mb-0">1000₩ = <span class="fw-bold" th:text="${exchangeRates.KRW.formattedRate}">0.00</span> USD</p>
+                                        <small th:class="${exchangeRates.KRW.trendClass}" th:if="${exchangeRates.KRW != null}">
+                                            <span th:text="${exchangeRates.KRW.trendSymbol}">▲</span>
+                                            <span th:text="${exchangeRates.KRW.formattedTrend}">0.00</span>%
+                                        </small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12 col-md-4">
+                        <div class="card shadow-sm exchange-card">
+                            <div class="card-body">
+                                <div class="d-flex align-items-center">
+                                    <img src="https://flagcdn.com/w40/eu.png" alt="EUR" class="currency-flag">
+                                    <div>
+                                        <h6 class="mb-0">Euro (EUR)</h6>
+                                        <p class="mb-0">1€ = <span class="fw-bold" th:text="${exchangeRates.EUR.formattedRate}">0.00</span> USD</p>
+                                        <small th:class="${exchangeRates.EUR.trendClass}" th:if="${exchangeRates.EUR != null}">
+                                            <span th:text="${exchangeRates.EUR.trendSymbol}">▲</span>
+                                            <span th:text="${exchangeRates.EUR.formattedTrend}">0.00</span>%
+                                        </small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Calculator Form -->
+            <div class="col-12 col-md-8 col-lg-6">
+                <div class="card shadow">
+                    <div class="card-body">
+                        <h4 class="card-title text-center mb-4">Travel Value Calculator</h4>
+                        <form th:action="@{/calculate}" method="post" class="needs-validation" novalidate>
+                            <div class="mb-3">
+                                <label for="budget" class="form-label">Travel Budget</label>
+                                <div class="input-group">
+                                    <select class="form-select" id="baseCurrency" name="baseCurrency" style="max-width: 100px;">
+                                        <option value="USD">USD</option>
+                                        <option value="KRW" selected>KRW</option>
+                                        <option value="JPY">JPY</option>
+                                        <option value="EUR">EUR</option>
+                                    </select>
+                                    <input type="number" class="form-control" id="budget" name="budget" 
+                                           th:value="${userInput != null ? userInput.budget : ''}" 
+                                           required min="1" step="1">
+                                </div>
+                                <div class="invalid-feedback">Please enter a valid budget amount.</div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="travelStyle" class="form-label">Travel Style</label>
+                                <select class="form-select" id="travelStyle" name="travelStyle" required>
+                                    <option value="BUDGET">Budget (Hostels, Public Transport)</option>
+                                    <option value="STANDARD" selected>Standard (3-star Hotels, Taxi)</option>
+                                    <option value="LUXURY">Luxury (5-star Hotels, Car Rental)</option>
                                 </select>
-                                <div class="form-text">선호하는 여행 스타일을 선택하세요.</div>
+                                <div class="invalid-feedback">Please select a travel style.</div>
                             </div>
 
                             <button type="submit" class="btn btn-primary w-100">
-                                <i class="bi bi-calculator"></i> 계산하기
+                                <i class="bi bi-calculator"></i> Calculate
                             </button>
                         </form>
                     </div>
@@ -42,6 +130,30 @@
         </div>
     </div>
 
-    <div th:replace="~{fragments/layout :: scripts}"></div>
+    <script>
+        // Form validation
+        (function () {
+            'use strict'
+            const forms = document.querySelectorAll('.needs-validation')
+            Array.from(forms).forEach(form => {
+                form.addEventListener('submit', event => {
+                    if (!form.checkValidity()) {
+                        event.preventDefault()
+                        event.stopPropagation()
+                    }
+                    form.classList.add('was-validated')
+                }, false)
+            })
+        })()
+
+        // 실시간 환율 업데이트 (예시)
+        function updateExchangeRates() {
+            // 실제 환율 API 연동 시 이 부분을 구현
+            console.log('Updating exchange rates...');
+        }
+
+        // 5분마다 환율 업데이트
+        setInterval(updateExchangeRates, 300000);
+    </script>
 </body>
 </html>
