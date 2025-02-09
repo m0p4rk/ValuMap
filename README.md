@@ -1,5 +1,8 @@
 # ValuMap
-A simple, Spring Boot–based application that calculates the best value-for-money travel destinations worldwide using real-time currency exchange rates and basic cost-of-living data. Deployed with Docker and AWS.
+A simple, Spring Boot–based application that calculates the best value-for-money travel destinations worldwide using real-time currency exchange rates and basic cost-of-living data.
+
+![image](https://github.com/user-attachments/assets/588a26b8-4eab-44c5-95dd-f4aa937a1c99)
+
 
 > **Overview**  
 > - This project is a web application that, based on the **home currency budget** (e.g., KRW) entered by the user, references **exchange rates** and **cost of living/travel data** for various countries around the world,  
